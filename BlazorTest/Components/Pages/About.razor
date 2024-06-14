@@ -1,0 +1,126 @@
+﻿@page "/about"
+@using Models
+@inject AppDbContext DbContext
+@rendermode InteractiveServer
+
+<PageTitle>About</PageTitle>
+
+<div class="overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-900">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-white">
+                    Product name
+                </th>
+                <th scope="col" class="px-6 py-3 text-white">
+                    Color
+                </th>
+                <th scope="col" class="px-6 py-3 text-white">
+                    Category
+                </th>
+                <th scope="col" class="px-6 py-3 text-white">
+                    Price
+                </th>
+                <th scope="col" class="px-6 py-3 text-white">
+                    <span class="sr-only">Edit</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in lsProducts)
+            {
+                <tr class="bg-white border-b hover:bg-gray-300">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @product.Name
+                    </td>
+                    <td class="px-6 py-4">
+                        @product.Color
+                    </td>
+                    <td class="px-6 py-4">
+                        @product.Category
+                    </td>
+                    <td class="px-6 py-4">
+                        @product.Price.ToString()
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button @onclick="() => EditProduct(product)" class="text-blue-600 hover:underline">Edit</button>
+                        <button @onclick="() => DeleteProduct(product.Id)" class="text-red-600 hover:underline ml-2">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4">
+    <h3 class="text-lg font-semibold mb-2">Add/Edit Product</h3>
+    <div class="flex border border-gray-200 rounded-lg overflow-hidden">
+        <div class="w-1/4 bg-gray-100 p-4">
+            <label class="block mb-2">Name:</label>
+            <input type="text" class="form-input w-full" @bind="product.Name" />
+        </div>
+        <div class="w-1/4 bg-gray-200 p-4">
+            <label class="block mb-2">Color:</label>
+            <input type="text" class="form-input w-full" @bind="product.Color" />
+        </div>
+        <div class="w-1/4 bg-gray-100 p-4">
+            <label class="block mb-2">Category:</label>
+            <input type="text" class="form-input w-full" @bind="product.Category" />
+        </div>
+        <div class="w-1/4 bg-gray-200 p-4">
+            <label class="block mb-2">Price:</label>
+            <input type="number" class="form-input w-full" @bind="product.Price" />
+        </div>
+    </div>
+    <div class="flex justify mt-4">
+        <button @onclick="SaveProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+    </div>
+</div>
+
+@code {
+    private List<Product> lsProducts = new List<Product>();
+    private Product product = new Product();
+
+    protected override void OnInitialized()
+    {
+        lsProducts = DbContext.Products.ToList();
+    }
+
+    private void SaveProduct()
+    {
+        if (product.Id == 0)
+        {
+            DbContext.Products.Add(product);
+        }
+        else
+        {
+            DbContext.Products.Update(product);
+        }
+        DbContext.SaveChanges();
+        lsProducts = DbContext.Products.ToList();
+        product = new Product();
+    }
+
+    private void EditProduct(Product product)
+    {
+        this.product = new Product
+        {
+                Id = product.Id,
+                Name = product.Name,
+                Color = product.Color,
+                Category = product.Category,
+                Price = product.Price
+        };
+    }
+
+    private void DeleteProduct(int id)
+    {
+        var product = DbContext.Products.Find(id);
+        if (product != null)
+        {
+            DbContext.Products.Remove(product);
+            DbContext.SaveChanges();
+            lsProducts = DbContext.Products.ToList();
+        }
+    }
+}
