@@ -42,9 +42,9 @@
                     <td class="px-6 py-4">
                         @product.Price.ToString()
                     </td>
-                    <td class="px-6 py-4 text-right">
-                        <button @onclick="() => EditProduct(product)" class="text-blue-600 hover:underline">Edit</button>
-                        <button @onclick="() => DeleteProduct(product.Id)" class="text-red-600 hover:underline ml-2">Delete</button>
+                    <td class="px-6 py-4 text-right flex justify-end space-x-2">
+                        <button @onclick="() => EditProduct(product)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded transition duration-300 ease-in-out">Edit</button>
+                        <button @onclick="() => DeleteProduct(product.Id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded transition duration-300 ease-in-out">Delete</button>
                     </td>
                 </tr>
             }
@@ -57,23 +57,23 @@
     <div class="flex border border-gray-200 rounded-lg overflow-hidden">
         <div class="w-1/4 bg-gray-100 p-4">
             <label class="block mb-2">Name:</label>
-            <input type="text" class="form-input w-full" @bind="product.Name" />
+            <input type="text" class="form-input w-full" @bind="product.Name" @bind:event="oninput" />
         </div>
         <div class="w-1/4 bg-gray-200 p-4">
             <label class="block mb-2">Color:</label>
-            <input type="text" class="form-input w-full" @bind="product.Color" />
+            <input type="text" class="form-input w-full" @bind="product.Color" @bind:event="oninput" />
         </div>
         <div class="w-1/4 bg-gray-100 p-4">
             <label class="block mb-2">Category:</label>
-            <input type="text" class="form-input w-full" @bind="product.Category" />
+            <input type="text" class="form-input w-full" @bind="product.Category" @bind:event="oninput" />
         </div>
         <div class="w-1/4 bg-gray-200 p-4">
             <label class="block mb-2">Price:</label>
-            <input type="number" class="form-input w-full" @bind="product.Price" />
+            <input type="number" class="form-input w-full" @bind="product.Price" @bind:event="oninput" />
         </div>
     </div>
     <div class="flex justify mt-4">
-        <button @onclick="SaveProduct" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+        <button @onclick="SaveProduct" class="@GetSaveButtonClass()" disabled="@IsSaveDisabled()">Save</button>
     </div>
 </div>
 
@@ -83,7 +83,17 @@
 
     protected override void OnInitialized()
     {
+        LoadProducts();
+    }
+
+    private void LoadProducts()
+    {
         lsProducts = DbContext.Products.ToList();
+    }
+
+    private void ResetProduct()
+    {
+        product = new Product();
     }
 
     private void SaveProduct()
@@ -94,23 +104,31 @@
         }
         else
         {
-            DbContext.Products.Update(product);
+            var product = DbContext.Products.Find(this.product.Id);
+            if (product != null)
+            {
+                product.Name = this.product.Name;
+                product.Color = this.product.Color;
+                product.Category = this.product.Category;
+                product.Price = this.product.Price;
+            }
         }
+
         DbContext.SaveChanges();
-        lsProducts = DbContext.Products.ToList();
-        product = new Product();
+        LoadProducts();
+        ResetProduct();
     }
 
     private void EditProduct(Product product)
     {
         this.product = new Product
-        {
+            {
                 Id = product.Id,
                 Name = product.Name,
                 Color = product.Color,
                 Category = product.Category,
                 Price = product.Price
-        };
+            };
     }
 
     private void DeleteProduct(int id)
@@ -120,7 +138,19 @@
         {
             DbContext.Products.Remove(product);
             DbContext.SaveChanges();
-            lsProducts = DbContext.Products.ToList();
+            LoadProducts();
         }
+    }
+
+    private bool IsSaveDisabled()
+    {
+        return string.IsNullOrWhiteSpace(product.Name) || string.IsNullOrWhiteSpace(product.Color) || string.IsNullOrWhiteSpace(product.Category) || product.Price <= 0;
+    }
+
+    private string GetSaveButtonClass()
+    {
+        return IsSaveDisabled()
+            ? "bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
     }
 }
