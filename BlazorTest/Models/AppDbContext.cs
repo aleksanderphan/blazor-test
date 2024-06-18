@@ -9,8 +9,20 @@ namespace BlazorTest.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(LocalDb)\\MSSQLLocalDB;Database=TestDatabase;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder.UseInMemoryDatabase("InMemoryDb");
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.Property(e => e.Name).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.Color).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.Category).HasMaxLength(20).IsRequired();
+                entity.Property(e => e.Price).HasPrecision(10, 2);
+            });
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
