@@ -70,7 +70,7 @@ namespace BlazorTest.Components.Pages
 
         private bool IsSaveDisabled()
         {
-            return string.IsNullOrWhiteSpace(product.Name) || string.IsNullOrWhiteSpace(product.Color) || string.IsNullOrWhiteSpace(product.Category) || product.Price <= 0;
+            return string.IsNullOrWhiteSpace(product.Name) || string.IsNullOrWhiteSpace(product.Color) || product.Price <= 0;
         }
 
         private string GetSaveButtonClass()

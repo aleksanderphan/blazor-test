@@ -5,7 +5,7 @@
 
 <PageTitle>Table</PageTitle>
 
-<div class="overflow-x-auto shadow-md sm:rounded-lg">
+<div class="overflow-y-auto justify-center items-center w-full md:inset-0 h-modal md:h-full shadow-md rounded-lg">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500">
         <thead class="text-xs text-gray-700 uppercase bg-gray-900">
             <tr>
@@ -52,27 +52,42 @@
     </table>
 </div>
 
-<div class="mt-4">
-    <h3 class="text-lg font-semibold mb-2">Add/Edit Product</h3>
-    <div class="flex border border-gray-200 rounded-lg overflow-hidden">
-        <div class="w-1/4 bg-gray-100 p-4">
-            <label class="block mb-2">Name:</label>
-            <input type="text" class="form-input w-full" @bind="product.Name" @bind:event="oninput" />
+<div aria-hidden="true" class="overflow-y-auto overflow-x-hidden justify-center items-center w-full md:inset-0 h-modal md:h-full">
+    <div class="relative p-4 w-full h-full md:h-auto mx-auto">
+        <div class="relative p-4 bg-white border rounded-lg shadow sm:p-5">
+            <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Product Setup
+                </h3>
+            </div>
+            <div class="grid gap-4 mb-4 sm:grid-cols-2">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Name</label>
+                    <input type="text" name="name" id="name" @bind="product.Name" @bind:event="oninput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="color" class="block mb-2 text-sm font-medium text-gray-900">Color</label>
+                    <input type="text" name="color" id="color" @bind="product.Color" @bind:event="oninput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="price" class="block mb-2 text-sm font-medium text-gray-900">Price</label>
+                    <input type="number" name="price" id="price" @bind="product.Price" @bind:event="oninput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="category" class="block mb-2 text-sm font-medium text-gray-900">Category</label>
+                    <select id="category" @bind="product.Category" @bind:event="onchange" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+                        <option value="Primary">Primary</option>
+                        <option value="Secondary">Secondary</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button @onclick="SaveProduct" class="@GetSaveButtonClass()" disabled="@IsSaveDisabled()">
+                    Save
+                </button>
+            </div>
         </div>
-        <div class="w-1/4 bg-gray-200 p-4">
-            <label class="block mb-2">Color:</label>
-            <input type="text" class="form-input w-full" @bind="product.Color" @bind:event="oninput" />
-        </div>
-        <div class="w-1/4 bg-gray-100 p-4">
-            <label class="block mb-2">Category:</label>
-            <input type="text" class="form-input w-full" @bind="product.Category" @bind:event="oninput" />
-        </div>
-        <div class="w-1/4 bg-gray-200 p-4">
-            <label class="block mb-2">Price:</label>
-            <input type="number" class="form-input w-full" @bind="product.Price" @bind:event="oninput" />
-        </div>
-    </div>
-    <div class="flex justify mt-4">
-        <button @onclick="SaveProduct" class="@GetSaveButtonClass()" disabled="@IsSaveDisabled()">Save</button>
     </div>
 </div>
+
