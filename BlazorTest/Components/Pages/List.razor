@@ -4,17 +4,27 @@
 
 <PageTitle>List</PageTitle>
 
-<div class="container mx-auto px-4">
-    <h3 class="text-2xl font-bold mb-4">Comments</h3>
+<div class="container mx-auto px-4 py-6">
+    <div class="flex place-content-between">
+        <h3 class="text-2xl font-bold mb-4">Comments</h3>
+
+        <div class="flex justify-center">
+            <button class="px-4 mr-2 bg-blue-500 text-white rounded disabled:opacity-50" @onclick="PreviousPage" disabled="@IsPreviousDisabled">Previous</button>
+            <button class="px-4 bg-blue-500 text-white rounded disabled:opacity-50" @onclick="NextPage" disabled="@IsNextDisabled">Next</button>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        @if (lsComments != null)
+        @if (pagedComments != null && pagedComments.Count > 0)
         {
-            foreach (var comment in lsComments)
+            @foreach (var comment in pagedComments)
             {
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h4 class="text-lg font-semibold">@comment.Name</h4>
-                    <p class="text-sm text-gray-600">@comment.Email</p>
-                    <p class="mt-2">@comment.Body</p>
+                <div class="comment-container">
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                        <h4 class="text-lg font-semibold">@comment.Name</h4>
+                        <p class="text-sm text-gray-600">@comment.Email</p>
+                        <p class="mt-2">@comment.Body</p>
+                    </div>
                 </div>
             }
         }

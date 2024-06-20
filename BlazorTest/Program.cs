@@ -1,5 +1,6 @@
 using BlazorTest.Components;
 using BlazorTest.Models;
+using BlazorTest.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// EF Core InMemory
 builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMemoryDb"));
+
+
+// REST API
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<ApiService>();
 
 var app = builder.Build();
 
